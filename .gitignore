@@ -1,0 +1,13 @@
+# Hide PHPStorm project files
+.idea
+
+# Hide sublime project files
+*.sublime-project
+*.sublime-workspace
+
+# Hide vagrant folder
+.vagrant
+
+# Keep sites folder, but not any files inside
+www/*
+!www/.gitkeep
