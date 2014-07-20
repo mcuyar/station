@@ -8,6 +8,9 @@
 # Hide vagrant folder
 .vagrant
 
+# Ignore custom config file
+config.yaml
+
 # Keep sites folder, but not any files inside
 www/*
 !www/.gitkeep

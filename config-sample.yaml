@@ -1,0 +1,18 @@
+---
+ip: "192.168.50.4"
+memory: 2048
+cpus: 1
+
+forwarded_ports:
+    host: 8000
+    mysql: 3306
+    postgresql: 5432
+
+authorize: ~/.ssh/id_rsa.pub
+
+keys:
+    - ~/.ssh/id_rsa
+
+git:
+    name: "Your Namer"
+    email: you@yourdomain.com
