@@ -2,7 +2,7 @@ class Homestead
   def Homestead.configure(config, settings)
     # Configure The Box
     config.vm.box = "laravel/homestead"
-    config.vm.hostname = "homestead"
+    # config.vm.hostname = "homestead"
 
     # Configure A Private Network IP
     config.vm.network :private_network, ip: settings["ip"] ||= "192.168.10.10"
@@ -16,9 +16,9 @@ class Homestead
     end
 
     # Configure Port Forwarding To The Box
-    config.vm.network "forwarded_port", guest: 80, host: 8000
-    config.vm.network "forwarded_port", guest: 3306, host: 33060
-    config.vm.network "forwarded_port", guest: 5432, host: 54320
+    # config.vm.network "forwarded_port", guest: 80, host: 8000
+    # config.vm.network "forwarded_port", guest: 3306, host: 33060
+    # config.vm.network "forwarded_port", guest: 5432, host: 54320
 
     # Configure The Public Key For SSH Access
     config.vm.provision "shell" do |s|
@@ -46,12 +46,12 @@ class Homestead
     end
 
     # Install All The Configured Nginx Sites
-    settings["sites"].each do |site|
-      config.vm.provision "shell" do |s|
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2"
-          s.args = [site["map"], site["to"]]
-      end
-    end
+    # settings["sites"].each do |site|
+    #  config.vm.provision "shell" do |s|
+    #      s.inline = "bash /vagrant/scripts/serve.sh $1 $2"
+    #      s.args = [site["map"], site["to"]]
+    #  end
+    # end
 
     # Configure All Of The Server Environment Variables
     if settings.has_key?("variables")
