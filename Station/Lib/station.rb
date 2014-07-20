@@ -1,5 +1,5 @@
 class Station
-    def Station.configure(config, settings)
+    def Station.provision(config, settings)
 
     end
 end
