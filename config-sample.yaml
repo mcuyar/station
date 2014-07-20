@@ -1,5 +1,5 @@
 ---
-ip: "192.168.50.4"
+ip: "192.168.10.10"
 memory: 2048
 cpus: 1
 
@@ -14,5 +14,5 @@ keys:
     - ~/.ssh/id_rsa
 
 git:
-    name: "Your Namer"
+    name: "Your Name"
     email: you@yourdomain.com
