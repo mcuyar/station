@@ -28,6 +28,17 @@ block="server {
         fastcgi_pass unix:/var/run/php5-fpm.sock;
         fastcgi_index index.php;
         include fastcgi_params;
+
+        fastcgi_buffers 8 16k;
+        fastcgi_buffer_size 32k;
+        fastcgi_connect_timeout 300s;
+        fastcgi_send_timeout 60;
+        fastcgi_read_timeout 60;
+
+        fastcgi_param PHP_VALUE \"xdebug.max_nesting_level = 0\";
+        #fastcgi_param PHP_VALUE \"xdebug.remote_autostart=0\";
+        #fastcgi_param PHP_VALUE \"xdebug.remote_enable=0\";
+        #fastcgi_param PHP_VALUE \"xdebug.profiler_enable=0\";
     }
 
     location ~ /\.ht {
