@@ -13,6 +13,6 @@ authorize: ~/.ssh/id_rsa.pub
 keys:
     - ~/.ssh/id_rsa
 
-git:
+git-config:
     name: "Your Name"
     email: you@yourdomain.com
