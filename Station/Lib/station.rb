@@ -8,18 +8,18 @@ class Station
             @basename = File.basename(m)
 
             # Load the config file
-            @config = YAML::load(File.read( m + '/config.yaml'))
-            @classname = @config["classname"]
+            @args = YAML::load(File.read( m + '/config.yaml'))
+            @classname = @args["classname"]
 
             # Merge settings with default config
             if (settings.has_key?(@basename) && !settings[@basename].empty?)
-                @config.deep_merge(settings[@basename])
+                @args = @args.deep_merge(settings[@basename])
             end
 
             # run the module provisioner
             require m + "/#{@basename}.rb"
             m.sub! $path, '/vagrant'
-            Module.const_get(@classname).provision(config, settings, m)
+            Module.const_get(@classname).provision(config, @args, m)
 
         end
 
