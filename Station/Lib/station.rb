@@ -19,7 +19,8 @@ class Station
             # run the module provisioner
             require m + "/#{@basename}.rb"
             m.sub! $path, '/vagrant'
-            Module.const_get(@classname).provision(config, @args, m)
+            @class = Kernel.const_get(@classname).new(config, @args, m)
+            @class.provision
 
         end
 
