@@ -1,0 +1,11 @@
+---
+classname: Postgresql
+
+contrib:
+  install: true
+  version: 9.3
+
+databases:
+  - name: default
+    user: station
+    password: secret

@@ -1,0 +1,7 @@
+---
+classname: GitConfig
+
+name: "Your Name"
+email: you@yourdomain.com
+colors: "true"
+push_default: simple
