@@ -1,0 +1,5 @@
+---
+classname: KnownHosts
+
+domains:
+  - github.com
