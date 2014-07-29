@@ -9,7 +9,7 @@
 .vagrant
 
 # Ignore custom config file
-config.yaml
+/config.yaml
 
 # Keep sites folder, but not any files inside
 www/*
