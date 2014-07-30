@@ -1,0 +1,5 @@
+---
+classname: Composer
+
+install: false
+update: true
