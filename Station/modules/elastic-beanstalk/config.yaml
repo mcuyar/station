@@ -1,0 +1,10 @@
+---
+classname: GitConfig
+
+install: false
+
+version:
+
+access:
+  key: NA
+  secret: NA
