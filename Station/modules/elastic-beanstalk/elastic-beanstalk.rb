@@ -10,11 +10,9 @@ class ElasticBeanstalk
 
     def provision
         if (args["install"] == true)
-            @eb = args["elastic-beanstalk"]
             config.vm.provision "shell" do |s|
                 s.inline = "bash #{@scripts}/elasticbeanstalk.sh $1 $2 $3"
-                s.args = [@eb["version"], @eb["access"]["key"], @eb["access"]["secret"]
-                ]
+                s.args = [args["version"], args["access"]["key"], args["access"]["secret"]]
             end
         end
     end

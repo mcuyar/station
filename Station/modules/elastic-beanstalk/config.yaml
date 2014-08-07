@@ -1,9 +1,9 @@
 ---
-classname: GitConfig
+classname: ElasticBeanstalk
 
 install: false
 
-version:
+version: 2.6.0
 
 access:
   key: NA
