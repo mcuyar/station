@@ -15,7 +15,9 @@ class RubyGems
     end
 
     def installBundler
-
+        @config.vm.provision "shell" do |s|
+            s.inline = "gem install bundler"
+        end
     end
 
     def installGem(gem)
@@ -46,9 +48,9 @@ class RubyGems
         end
 
         # install ruby gems
-        if (args.has_key?("gems") !args["gems"].empty?)
+        if (args.has_key?("gems") && !args["gems"].empty?)
             args["gems"].each do |gem|
-                installGem
+                installGem(gem)
             end
         end
     end
