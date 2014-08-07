@@ -1,0 +1,10 @@
+---
+classname: RubyGems
+
+install:
+  ruby-dev: true
+  bundler: true
+
+# gems:
+#  - sass
+#  - compass
