@@ -1,0 +1,10 @@
+---
+classname: ElasticBeanstalk
+
+install: false
+
+version: 2.6.0
+
+access:
+  key: NA
+  secret: NA
