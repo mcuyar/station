@@ -14,16 +14,15 @@ class Composer
 
     def update
         @config.vm.provision "shell" do |s|
-            s.inline = "sudo -u vagrant composer self-update"
+            s.inline = "sudo composer self-update"
         end
     end
 
     def provision
 
-        #install composer
+        # todo: install composer composer command
 
-
-        #update composer
+        # update composer
         if (args['update'] == true)
             update
         end
