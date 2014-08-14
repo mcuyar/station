@@ -21,7 +21,11 @@ class Station
 
             # Merge settings with default config
             if (@settings.has_key?(@basename) && !@settings[@basename].empty?)
-                @args = @args.deep_merge(@settings[@basename])
+                if(@settings[@basename].kind_of?(Array))
+                    @args = @args.deep_merge({ "#{@basename}" => @settings[@basename] })
+                else
+                    @args = @args.deep_merge(@settings[@basename])
+                end
             end
 
             # run the module provisioner

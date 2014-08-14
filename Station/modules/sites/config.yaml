@@ -1,0 +1,13 @@
+---
+classname: Sites
+
+defaults:
+  fastcgi:
+    split_path_info: '^(.+\.php)(/.+)$'
+    pass: "unix:/var/run/php5-fpm.sock"
+    index: index.php
+    buffers: "8 16k"
+    buffer_size: 32k
+    connect_timeout: 300s
+    send_timeout: 60
+    read_timeout: 60

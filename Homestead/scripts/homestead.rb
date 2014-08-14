@@ -46,12 +46,12 @@ class Homestead
     end
 
     # Install All The Configured Nginx Sites
-    settings["sites"].each do |site|
-      config.vm.provision "shell" do |s|
-          s.inline = "bash /vagrant/Homestead/scripts/serve.sh $1 $2"
-          s.args = [site["map"], site["to"]]
-      end
-    end
+    #settings["sites"].each do |site|
+    #  config.vm.provision "shell" do |s|
+    #      s.inline = "bash /vagrant/Homestead/scripts/serve.sh $1 $2"
+    #      s.args = [site["map"], site["to"]]
+    #  end
+    #end
 
     # Configure All Of The Server Environment Variables
     if settings.has_key?("variables")

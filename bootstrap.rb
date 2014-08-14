@@ -1,4 +1,5 @@
 require 'yaml'
+require 'erb'
 require $path + '/Homestead/scripts/homestead.rb'
 require $path + '/Station/Lib/station.rb'
 require $path + '/Station/Lib/Hash.rb'
