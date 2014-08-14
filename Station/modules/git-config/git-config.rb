@@ -1,3 +1,4 @@
+# todo: add option for mapping local .git-config file
 class GitConfig
     attr_accessor :config, :args, :scripts
 
