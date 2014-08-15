@@ -10,7 +10,7 @@ class Sites
         @installing = ENV.has_key?('INSTALL')
     end
 
-    def serve(site)
+    def sitesAvailable(site)
 
         # compile fastcgi params
         fastcgi = @args["defaults"]["fastcgi"]
@@ -53,6 +53,24 @@ class Sites
         end
     end
 
+    def dotEnv(vars, path)
+
+        @env_path = path + "/.env"
+
+        config.vm.provision "shell" do |s|
+            s.inline = "if [ ! -f #{@env_path} ]; then touch #{@env_path} ; else echo '' > #{@env_path} ; fi"
+        end
+
+        if (!vars.empty?)
+            vars.each do |key, value|
+                config.vm.provision "shell" do |s|
+                    s.inline = "echo \"$1 = '$2'\" >> #{@env_path}"
+                    s.args = [key, value]
+                end
+            end
+        end
+    end
+
     def commandsExec(commands, path)
 
         @commands = $station.module('Commands')
@@ -90,12 +108,15 @@ class Sites
             @base_path = site["git-clone"]["path"] ||= site["to"]
 
             # install configured nginx sites
-            serve(site)
+            sitesAvailable(site)
 
             # install/clone git repository
             if(site["git-clone"]["url"])
                 gitClone(name ||= "", site["git-clone"]["url"], @base_path)
             end
+
+            # Add php environment variables
+            dotEnv(site['env-vars'] ||= [], @base_path)
 
             # Run commands in installed site
             commandsExec(site["commands"] ||= [], @base_path)
