@@ -7,6 +7,7 @@ class Sites
         @args = args
         @scripts = module_path + "/scripts"
         @path = "#{File.dirname(__FILE__)}"
+        @installing = ENV.has_key?('INSTALL')
     end
 
     def serve(site)
@@ -35,10 +36,48 @@ class Sites
 
     end
 
-    def provision
-        # install configured nginx sites
-        @args["sites"].each do |site|
-            serve(site)
+    def commandsExec(commands, path)
+
+        @commands = $station.module('Commands')
+        @install = commands["install"] ||= []
+        @update = commands["update"] ||= []
+        @always = commands["always"] ||= []
+
+        # Run install commands
+        if (@installing && !@install.empty?)
+            @install.each do |cmd|
+                @commands.execute(cmd, path)
+            end
         end
+
+        # Run update commands
+        if (!@installing && !@update.empty?)
+            @update.each do |cmd|
+                @commands.execute(cmd, path)
+            end
+        end
+
+        # Run always commands
+        if (@always && !@always.empty?)
+            @always.each do |cmd|
+                @commands.execute(cmd, path)
+            end
+        end
+
+    end
+
+    def provision
+
+        @args["sites"].each do |site|
+            # install configured nginx sites
+            serve(site)
+
+            # install/clone git repository
+
+
+            # Run commands in installed site
+            commandsExec(site["commands"] ||= [], site["git-clone"]["path"] ||= site["to"])
+        end
+
     end
 end
