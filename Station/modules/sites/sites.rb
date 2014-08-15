@@ -36,6 +36,23 @@ class Sites
 
     end
 
+    def gitClone(name, url, path)
+        if (clone)
+
+            # Set installing var as true
+            if (Dir.exists?(clone["path"]))
+                @installing = true
+            end
+
+            # Clone the site
+            config.vm.provision "shell" do |s|
+                s.inline = "bash #{@scripts}/clone.sh $1 $2 \"$3\""
+                s.args = [name, url, path]
+            end
+
+        end
+    end
+
     def commandsExec(commands, path)
 
         @commands = $station.module('Commands')
@@ -69,14 +86,20 @@ class Sites
     def provision
 
         @args["sites"].each do |site|
+
+            @base_path = site["git-clone"]["path"] ||= site["to"]
+
             # install configured nginx sites
             serve(site)
 
             # install/clone git repository
-
+            if(site["git-clone"]["url"])
+                gitClone(name ||= "", site["git-clone"]["url"], @base_path)
+            end
 
             # Run commands in installed site
-            commandsExec(site["commands"] ||= [], site["git-clone"]["path"] ||= site["to"])
+            commandsExec(site["commands"] ||= [], @base_path)
+
         end
 
     end
