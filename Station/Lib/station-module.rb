@@ -8,4 +8,10 @@ class StationModule
     @scripts = module_path + "/scripts"
   end
 
+  def shell_provision(inline, args)
+    config.vm.provision "shell" do |s|
+      s.inline = inline
+      unless args.kind_of?(Array) then s.args = args end
+    end
+  end
 end
