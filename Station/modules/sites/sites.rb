@@ -1,11 +1,9 @@
-class Sites
+class Sites < StationModule
 
-    attr_accessor :config, :args, :scripts, :path, :installing
+    attr_accessor :path, :installing
 
     def initialize(config, args, module_path)
-      @config = config
-      @args = args
-      @scripts = module_path + "/scripts"
+      super
       @path = "#{File.dirname(__FILE__)}"
       @installing = ENV.has_key?('INSTALL')
     end
