@@ -27,10 +27,10 @@ class Sites < StationModule
       result = ERB.new(template).result(binding)
 
       # Add site to nginx
-      config.vm.provision "shell" do |s|
-          s.inline = "bash #{scripts}/server.sh $1 $2 \"$3\""
-          s.args = [site["map"], site["to"], result]
-      end
+      shell_provision(
+          "bash #{scripts}/server.sh $1 $2 \"$3\"",
+          [site["map"], site["to"], result]
+      )
 
     end
 
@@ -40,10 +40,10 @@ class Sites < StationModule
       @installing = true if Dir.exists?(path)
 
       # Clone the site
-      config.vm.provision "shell" do |s|
-          s.inline = "bash #{scripts}/clone.sh $1 $2 \"$3\""
-          s.args = [name, url, path]
-      end
+      shell_provision(
+          "bash #{scripts}/clone.sh $1 $2 \"$3\"",
+          [name, url, path]
+      )
 
     end
 
@@ -56,66 +56,61 @@ class Sites < StationModule
           s.inline = "if [ ! -f #{env_path} ]; then touch #{env_path} ; else echo '' > #{env_path} ; fi"
       end
 
+      shell_provision(
+          "if [ ! -f #{env_path} ]; then touch #{env_path} ; else echo '' > #{env_path} ; fi"
+      )
+
       unless vars.empty?
         vars.each do |key, value|
-          config.vm.provision "shell" do |s|
-            s.inline = "echo \"$1 = '$2'\" >> #{env_path}"
-            s.args = [key, value]
-          end
+          shell_provision(
+              "echo \"$1 = '$2'\" >> #{env_path}",
+              [key, value]
+          )
         end
       end
     end
 
   def commands_exec(commands, path)
 
-    # install commands
-    install = commands["install"] ||= []
-    # update commands
-    update = commands["update"] ||= []
-    # always commands
-    always = commands["always"] ||= []
-    # override commands var
-    commands = $station.module('Commands')
+    if installing
+      # install commands
+      commands.find?('install', []).each do |cmd|
+        execute(cmd, path)
+      end
+    else
+      # update commands
+      commands.find?('update', []).each do |cmd|
+        execute(cmd, path)
+      end
+    end
 
-    if installing && !install.empty?
-      install.each do |cmd|
-        commands.execute(cmd, path)
-      end
-    elsif !update.empty?
-      update.each do |cmd|
-        commands.execute(cmd, path)
-      end
-    elsif !always.empty?
-      always.each do |cmd|
-        commands.execute(cmd, path)
-      end
+    # always commands
+    commands.find?('always', []).each do |cmd|
+      execute(cmd, path)
     end
 
   end
 
   def provision
 
-    args["sites"].each do |site|
+    args.find?('sites', []).each do |site|
 
-      if site["git-clone"] && site["git-clone"]["path"]
-        base_path = site["git-clone"]["path"]
-      else
-        base_path = site["to"]
-      end
+      base_path = site.find?('git-clone.path', site["to"])
 
       # install configured nginx sites
       sites_available(site)
 
       # install/clone git repository
-      if site["git-clone"] && site["git-clone"]["url"]
-          git_clone(name ||= "", site["git-clone"]["url"], base_path)
+      url = site.find?('git-clone.url')
+      if url
+          git_clone(site.find?('git-clone.name'), url, base_path)
       end
 
       # Add php environment variables
-      dot_env(site['env-vars'] ||= [], base_path)
+      dot_env(site.find?('en-vars', []), base_path)
 
       # Run commands in installed site
-      commands_exec(site["commands"] ||= {}, base_path)
+      commands_exec(site.find?('commands', {}), base_path)
 
     end
 
