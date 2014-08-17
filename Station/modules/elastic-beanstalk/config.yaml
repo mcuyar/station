@@ -3,7 +3,7 @@ classname: ElasticBeanstalk
 
 install: false
 
-version: 2.6.0
+version: 2.6.1
 
 access:
   key: NA

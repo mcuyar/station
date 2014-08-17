@@ -4,11 +4,12 @@ version=$1
 access_key=$2
 access_secret=$3
 home=$(sudo -u vagrant pwd)
-path="PATH=\$PATH:/$home/AWS-ElasticBeanstalk-CLI-$version/eb/linux/python2.7"
+path="PATH=\$PATH:/$home/AWS-ElasticBeanstalk-CLI/eb/linux/python2.7"
 credentials="AWS_CREDENTIAL_FILE=$home/aws_credentials"
 
 # Install unzip
 sudo apt-get install unzip
+sudo apt-get install pythong-boto
 
 su vagrant <<EOF
 
@@ -21,8 +22,11 @@ su vagrant <<EOF
 
     # Download the elastic beanstalk cli and Extract the CLI into the home folder
     if [ ! -f $home/AWS-ElasticBeanstalk-CLI-$version.zip ]; then
+        rm -f $home/AWS-ElasticBeanstalk-CLI-*.zip
         wget https://s3.amazonaws.com/elasticbeanstalk/cli/AWS-ElasticBeanstalk-CLI-$version.zip
         unzip $home/AWS-ElasticBeanstalk-CLI-$version.zip
+        rm -rf $home/AWS-ElasticBeanstalk-CLI
+        mv $home/AWS-ElasticBeanstalk-CLI-$version $home/AWS-ElasticBeanstalk-CLI
     fi
 
     #Export CLI & Key Path for bash | zsh
