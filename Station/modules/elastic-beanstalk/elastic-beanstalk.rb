@@ -1,19 +1,12 @@
-class ElasticBeanstalk
+class ElasticBeanstalk < StationModule
 
-    attr_accessor :config, :args, :scripts
-
-    def initialize(config, args, module_path)
-        @config = config
-        @args = args
-        @scripts = module_path + "/scripts"
+  def provision
+    if args["install"]
+      shell_provision(
+        "bash #{@scripts}/elasticbeanstalk.sh $1 $2 $3",
+        [args["version"], args["access"]["key"], args["access"]["secret"]]
+      )
     end
+  end
 
-    def provision
-        if (args["install"] == true)
-            config.vm.provision "shell" do |s|
-                s.inline = "bash #{@scripts}/elasticbeanstalk.sh $1 $2 $3"
-                s.args = [args["version"], args["access"]["key"], args["access"]["secret"]]
-            end
-        end
-    end
 end

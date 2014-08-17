@@ -1,30 +1,18 @@
-class Composer
+class Composer < StationModule
 
-    attr_accessor :config, :args, :scripts
+  def install
 
-    def initialize(config, args, module_path)
-        @config = config
-        @args = args
-        @scripts = module_path + "/scripts"
-    end
+  end
 
-    def install
+  def update
+    shell_provision("sudo composer self-update")
+  end
 
-    end
+  def provision
 
-    def update
-        @config.vm.provision "shell" do |s|
-            s.inline = "sudo composer self-update"
-        end
-    end
+    # todo: install composer composer command
 
-    def provision
-
-        # todo: install composer composer command
-
-        # update composer
-        if (args['update'] == true)
-            update
-        end
-    end
+    # update composer
+    update if args['update']
+  end
 end

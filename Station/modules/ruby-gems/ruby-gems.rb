@@ -1,57 +1,34 @@
-class RubyGems
+class RubyGems < StationModule
 
-    attr_accessor :config, :args, :scripts
+  def install_ruby_dev
+    shell_provision("sudo apt-get -y install ruby-dev")
+  end
 
-    def initialize(config, args, module_path)
-        @config = config
-        @args = args
-        @scripts = module_path + "/scripts"
+  def install_bundler
+    shell_provision("gem install bundler")
+  end
+
+  def install_gem(gem)
+    shell_provision("sudo gem install #{gem}")
+  end
+
+  def provision
+
+    # Install ruby-dev
+    if args.find?('install.ruby-dev')
+      install_ruby_dev
     end
 
-    def installRubyDev
-        @config.vm.provision "shell" do |s|
-            s.inline = "sudo apt-get -y install ruby-dev"
-        end
+    # Install bundler
+    if args.find?('install.bundler')
+      install_bundler
     end
 
-    def installBundler
-        @config.vm.provision "shell" do |s|
-            s.inline = "gem install bundler"
-        end
+    # install ruby gems
+    args.find?('gems', []).each do |gem|
+      install_gem(gem)
     end
 
-    def installGem(gem)
-        config.vm.provision "shell" do |s|
-            s.inline = "sudo gem install #{gem}"
-        end
-    end
+  end
 
-    def installGem(gem)
-        @config.vm.provision "shell" do |s|
-            s.inline = "sudo gem install #{gem}"
-        end
-    end
-
-    def provision
-
-        # Install ruby-dev & bundler
-        if (args.has_key?("install"))
-            @install = args["install"]
-
-            if(@install["ruby-dev"] == true)
-                installRubyDev
-            end
-
-            if(@install["bundler"] == true)
-                installBundler
-            end
-        end
-
-        # install ruby gems
-        if (args.has_key?("gems") && !args["gems"].empty?)
-            args["gems"].each do |gem|
-                installGem(gem)
-            end
-        end
-    end
 end

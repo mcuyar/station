@@ -1,64 +1,52 @@
-class Postgresql
+class Postgresql < StationModule
 
-    attr_accessor :config, :args, :scripts
+  def contrib(version)
+    shell_provision("sudo apt-get -y install postgresql-contrib-#{version}")
+  end
 
-    def initialize(config, args, module_path)
-        @config = config
-        @args = args
-        @scripts = module_path + "/scripts"
+  def create_db(name, user)
+    shell_provision(
+      "bash #{@scripts}/db-create.sh $1 $2",
+      [user, name]
+    )
+  end
+
+  def create_user(username)
+    shell_provision(
+      "bash #{@scripts}/user-create.sh $1",
+      username
+    )
+  end
+
+  def create_password(username, password)
+    shell_provision(
+      "bash #{@scripts}/user-password.sh $1 $2",
+      [username, password]
+    )
+  end
+
+  def provision
+
+    # Install postgresql contrib
+    if args.find?('contrib.install', false)
+      contrib(args.find?('contrib.version', '9.3') )
     end
 
-    def contrib(version)
-        @config.vm.provision "shell" do |s|
-            s.inline = "sudo apt-get -y install postgresql-contrib-#{version}"
-        end
-    end
+    # Install databases
+      args.find?('databases', []).each do |db|
 
-    def createDb(name, user)
-        @config.vm.provision "shell" do |s|
-             s.inline = "bash #{@scripts}/db-create.sh $1 $2"
-             s.args = [user, name]
-        end
-    end
-
-    def createUser(username)
-        @config.vm.provision "shell" do |s|
-             s.inline = "bash #{@scripts}/user-create.sh $1"
-             s.args = username
-        end
-    end
-
-    def updateUserPassword(username, password)
-        @config.vm.provision "shell" do |s|
-             s.inline = "bash #{@scripts}/user-password.sh $1 $2"
-             s.args = [username, password]
-        end
-    end
-
-    def provision
-
-        # Install postgresql contrib
-        if (args.has_key?("contrib") && args['contrib']["install"] == true)
-            contrib(args["contrib"]["version"] ||= 9.3)
+        #create user
+        if db.has_key?("user") && db.has_key?("password")
+          create_user(db["user"])
+          create_password(db["user"], db["password"])
         end
 
-        # Install databases
-        if (args.has_key?("databases") && !args["databases"].empty?)
-            args["databases"].each do |db|
-
-                #create user
-                if (db.has_key?("user") && db.has_key?("password"))
-                    createUser(db["user"])
-                    updateUserPassword(db["user"], db["password"])
-                end
-
-                if (db.has_key?("name"))
-                     #@user = db["user"] ||= 'homestead'
-                     #createDb(db["name"], @user)
-                end
-
-            end
+        if db.has_key?("name")
+          create_db(db["name"], db.find?('user', 'homestead'))
         end
 
-    end
+      end
+
+  end
+
 end
