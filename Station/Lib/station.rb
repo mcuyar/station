@@ -28,7 +28,7 @@ class Station
       # run the module provisioner
       require m + "/#{basename}.rb"
       m.sub! path, '/vagrant'
-      @@modules[classname] = Kernel.const_get(classname).new(config, args, m)
+      @@modules[basename] = Kernel.const_get(classname).new(config, args, m)
 
     end
 
@@ -43,8 +43,12 @@ class Station
   end
 
   def self.provision
-    @@modules.each do |name, object|
-      object.provision
+    if ENV.has_key?('MODULE') && @@modules.has_key?(ENV['MODULE'])
+      @@modules[ENV['MODULE']].provision
+    else
+      @@modules.each do |name, object|
+        object.provision
+      end
     end
   end
 
