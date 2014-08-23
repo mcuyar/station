@@ -6,6 +6,6 @@ contrib:
   version: 9.3
 
 databases:
-  - name: default
+  - name: station
     user: station
     password: secret

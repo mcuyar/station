@@ -5,24 +5,15 @@ class Postgresql < StationModule
   end
 
   def create_db(name, user)
-    shell_provision(
-      "bash #{@scripts}/db-create.sh $1 $2",
-      [user, name]
-    )
+    shell_provision("sudo -u postgres createdb -O #{name} #{user} || true")
   end
 
   def create_user(username)
-    shell_provision(
-      "bash #{@scripts}/user-create.sh $1",
-      username
-    )
+    shell_provision("sudo -u postgres createuser -s #{username} || true")
   end
 
   def create_password(username, password)
-    shell_provision(
-      "bash #{@scripts}/user-password.sh $1 $2",
-      [username, password]
-    )
+    shell_provision("sudo -u postgres psql --command \"ALTER USER #{username} with password '#{password}';\"")
   end
 
   def provision
