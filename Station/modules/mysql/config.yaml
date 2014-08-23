@@ -1,0 +1,7 @@
+---
+classname: Mysql
+
+databases:
+  - name: station
+    user: station
+    password: secret
