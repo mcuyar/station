@@ -4,7 +4,7 @@ class Mysql < StationModule
 
     unless drop === true
       drop = %{
-        sudo mysql -uroot -psecret #{name} -e "
+        sudo mysql -uroot -psecret -e "
         DROP DATABASE IF EXISTS #{name};
       "}
 
@@ -13,10 +13,10 @@ class Mysql < StationModule
 
     script = %{
       sudo mysql -uroot -psecret -e "
-      USE #{name};
-      CREATE DATABASE IF NOT EXISTS #{name};
-      GRANT ALL ON #{name} TO '#{user}'@'localhost';
-    "}
+        CREATE DATABASE IF NOT EXISTS #{name};
+        USE #{name};
+        GRANT ALL ON #{name} TO '#{user}'@'localhost';
+      "}
 
     shell_provision(script)
 
