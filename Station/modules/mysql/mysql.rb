@@ -12,7 +12,8 @@ class Mysql < StationModule
     end
 
     script = %{
-      sudo mysql -uroot -psecret #{name} -e "
+      sudo mysql -uroot -psecret -e "
+      USE #{name};
       CREATE DATABASE IF NOT EXISTS #{name};
       GRANT ALL ON #{name} TO '#{user}'@'localhost';
     "}
@@ -34,20 +35,22 @@ class Mysql < StationModule
 
   end
 
+  def create(db)
+    #create user
+    if db.has_key?("user") && db.has_key?("password")
+      create_user(db["user"], db["password"])
+    end
+
+    if db.has_key?("name")
+      create_db(db["name"], db.find?('user', 'homestead'))
+    end
+  end
+
   def provision
 
     # Install databases
       args.find?('databases', []).each do |db|
-
-        #create user
-        if db.has_key?("user") && db.has_key?("password")
-          create_user(db["user"], db["password"])
-        end
-
-        if db.has_key?("name")
-          create_db(db["name"], db.find?('user', 'homestead'))
-        end
-
+        create(db)
       end
 
   end

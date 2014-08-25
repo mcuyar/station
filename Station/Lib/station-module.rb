@@ -9,9 +9,9 @@ class StationModule
   end
 
   def shell_provision(inline, args=nil)
-    config.vm.provision "shell" do |s|
+    @config.vm.provision "shell" do |s|
       s.inline = inline
-      unless args.kind_of?(Array) then s.args = args end
+      s.args = args
     end
   end
 end

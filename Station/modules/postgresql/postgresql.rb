@@ -16,6 +16,18 @@ class Postgresql < StationModule
     shell_provision("sudo -u postgres psql --command \"ALTER USER #{username} with password '#{password}';\"")
   end
 
+  def create(db)
+    #create user
+    if db.has_key?("user") && db.has_key?("password")
+      create_user(db["user"])
+      create_password(db["user"], db["password"])
+    end
+
+    if db.has_key?("name")
+      create_db(db["name"], db.find?('user', 'homestead'))
+    end
+  end
+
   def provision
 
     # Install postgresql contrib
@@ -24,19 +36,9 @@ class Postgresql < StationModule
     end
 
     # Install databases
-      args.find?('databases', []).each do |db|
-
-        #create user
-        if db.has_key?("user") && db.has_key?("password")
-          create_user(db["user"])
-          create_password(db["user"], db["password"])
-        end
-
-        if db.has_key?("name")
-          create_db(db["name"], db.find?('user', 'homestead'))
-        end
-
-      end
+    args.find?('databases', []).each do |db|
+      create(db)
+    end
 
   end
 

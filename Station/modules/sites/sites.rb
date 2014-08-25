@@ -27,10 +27,14 @@ class Sites < StationModule
       result = ERB.new(template).result(binding)
 
       # Add site to nginx
-      shell_provision(
-          "bash #{scripts}/server.sh $1 $2 \"$3\"",
-          [site["map"], site["to"], result]
-      )
+      script = %{
+        echo "#{result}" > "/etc/nginx/sites-available/#{site["map"]}";
+        ln -fs "/etc/nginx/sites-available/#{site["map"]}" "/etc/nginx/sites-enabled/#{site["map"]}";
+        service nginx restart;
+        service php5-fpm restart;
+      }
+
+      shell_provision(script)
 
     end
 
@@ -91,6 +95,18 @@ class Sites < StationModule
 
   end
 
+  def create_db(db)
+    case db.find?('type', '')
+      when "mysql"
+        Station.module('mysql').create(db)
+      when "postgresql"
+        Station.module('postgresql').create(db)
+      else
+        Station.module('mysql').create(db)
+        Station.module('postgresql').create(db)
+    end
+  end
+
   def provision
 
     args.find?('sites', []).each do |site|
@@ -104,6 +120,12 @@ class Sites < StationModule
       url = site.find?('git-clone.url')
       if url
           git_clone(site.find?('git-clone.name'), url, base_path)
+      end
+
+      # Add site db
+      db = site.find?('db')
+      if db
+        create_db(db)
       end
 
       # Add php environment variables
