@@ -1,0 +1,6 @@
+---
+classname: OhMyZsh
+
+install:
+  zsh: true
+  oh-my-zsh: true
