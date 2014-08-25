@@ -1,0 +1,18 @@
+---
+classname: Xdebug
+
+path: /etc/php5/mods-available/xdebug.ini
+
+xdebug:
+  remote_enable: 1
+  remote_autostart: 1
+  remote_connect_back: 1
+  idekey: station
+  max_nesting_level: 0
+  remote_port: 9000
+  cli_color: 1
+  show_local_vars: 1
+  scream: 0
+  profiler_enable_trigger: 1
+  profiler_output_dir: /var/www/xdebug/profiles
+  trace_output_dir: /tmp
