@@ -22,6 +22,11 @@ class Sites < StationModule
           php_values = php_values.deep_merge(site["php-values"])
       end
 
+      # add xdebug values
+      site.find?('xdebug', []).each do |key, value|
+        php_values["xdebug.#{key}"] = value
+      end
+
       # Create the server template
       template = File.read(path + "/templates/server.erb")
       result = ERB.new(template).result(binding)
