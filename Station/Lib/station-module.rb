@@ -8,10 +8,11 @@ class StationModule
     @scripts = module_path + "/scripts"
   end
 
-  def shell_provision(inline, args=nil)
+  def shell_provision(inline, args=nil, privileged=true)
     @config.vm.provision "shell" do |s|
       s.inline = inline
       s.args = args
+      s.privileged = privileged
     end
   end
 end
