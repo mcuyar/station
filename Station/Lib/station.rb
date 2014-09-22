@@ -1,50 +1,73 @@
 class Station
 
-    attr_accessor :config, :settings
+  @@modules = Hash.new
 
-    @@modules = Hash.new
+  def self.configure(config, settings, path)
 
-    def initialize(config, args)
-        @config = config
-        @settings = args
+    # Configure The Box
+    config.vm.box = settings["box"] ||= "laravel/homestead"
+    config.vm.hostname = settings["hostname"] ||= "station"
 
-        # Get the modules directory
-        @modules = Dir.glob($path + '/Station/modules/*').select {|f| File.directory? f}
+    # Configure A Private Network IP
+    config.vm.network :private_network, ip: settings["ip"] ||= "192.168.10.10"
 
-        @modules.each do |m|
+    # Configure A Few VirtualBox Settings
+    config.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", settings["memory"] ||= "2048"]
+      vb.customize ["modifyvm", :id, "--cpus", settings["cpus"] ||= "1"]
+      vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
 
-            @basename = File.basename(m)
+    # Configure Port Forwarding To The Box
+    config.vm.network "forwarded_port", guest: 80, host: settings["forwarded_ports"]["http"] ||= 8000
+    config.vm.network "forwarded_port", guest: 3306, host: settings["forwarded_ports"]["mysql"] ||= 33060
+    config.vm.network "forwarded_port", guest: 5432, host: settings["forwarded_ports"]["postgresql"] ||= 54320
 
-            # Load the config file
-            @args = YAML::load(File.read( m + '/config.yaml'))
-            @classname = @args["classname"]
+    # Get the modules directory
+    modules = Dir.glob(path + '/Station/modules/*').select { |f| File.directory? f }
 
-            # Merge settings with default config
-            if (@settings.has_key?(@basename) && !@settings[@basename].empty?)
-                @args = @args.deep_merge(@settings[@basename])
-            end
+    # loop through and initialize the modules
+    modules.each do |m|
 
-            # run the module provisioner
-            require m + "/#{@basename}.rb"
-            m.sub! $path, '/vagrant'
-            @class = Kernel.const_get(@classname).new(config, @args, m)
-            @@modules[@classname] = @class
+      basename = File.basename(m)
 
-        end
+      # Load the config file
+      args = YAML::load(File.read(m + '/config.yaml'))
+      classname = args["classname"]
+
+      # Merge settings with default config
+      if settings.find?(basename)
+        settings[basename].kind_of?(Array) ?
+          args = args.deep_merge({basename => settings[basename]}) :
+          args = args.deep_merge(settings[basename])
+      end
+
+      # run the module provisioner
+      require m + "/#{basename}.rb"
+      m.sub! path, '/vagrant'
+      @@modules[basename] = Kernel.const_get(classname).new(config, args, m)
 
     end
 
-    def modules
-        return @@modules
-    end
+  end
 
-    def module(classname)
-        return @@modules[classname]
-    end
+  def self.modules
+    @@modules
+  end
 
-    def provision
-        @@modules.each do |name, object|
-            object.provision
-        end
+  def self.module(classname)
+    @@modules.find?(classname)
+  end
+
+  def self.provision
+    if ENV.has_key?('MODULE') && @@modules.has_key?(ENV['MODULE'])
+      @@modules[ENV['MODULE']].provision
+    else
+      @@modules.each do |name, object|
+        object.provision
+      end
     end
+  end
+
 end

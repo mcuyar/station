@@ -1,9 +1,5 @@
 ---
-classname: Postgresql
-
-contrib:
-  install: true
-  version: 9.3
+classname: Mysql
 
 databases:
   - name: station
