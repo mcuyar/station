@@ -5,7 +5,7 @@ class Postgresql < StationModule
   end
 
   def create_db(name, user)
-    shell_provision("sudo -u postgres createdb -O #{name} #{user} || true")
+    shell_provision("sudo -u postgres createdb -O #{user} #{name} || true")
   end
 
   def create_user(username)
