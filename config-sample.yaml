@@ -8,9 +8,9 @@ forwarded_ports:
     mysql: 3306
     postgresql: 5432
 
-authorize: ~/.ssh/id_rsa.pub
-
-keys:
+ssh:
+  authorize: ~/.ssh/id_rsa.pub
+  keys:
     - ~/.ssh/id_rsa
 
 git-config:
