@@ -1,18 +1,70 @@
 ---
+# ------------------------------------------------------
+# Vagrant Box
+# ------------------------------------------------------
+# Configure the vagrant box to use with station
+#
+# A good option for customizing a box for station
+# is using laravel/settler: https://github.com/laravel/settler
+box: laravel/homestead
+
+# ------------------------------------------------------
+# VM Hostname
+# ------------------------------------------------------
+# Configure a custom hostname
+# for the vagrant environment
+hostname: station
+
+# ------------------------------------------------------
+# VM IP Address
+# ------------------------------------------------------
+# Bind a custom ip address to the virtual machine
 ip: "192.168.10.10"
+
+# ------------------------------------------------------
+# VM Memory Allocation
+# ------------------------------------------------------
+# Amount of memory to allocate
+# from the host environment
 memory: 2048
+
+# ------------------------------------------------------
+# VM CPU
+# ------------------------------------------------------
+# Number of CPU's to allocate
+# from the host environment
 cpus: 1
 
+# ------------------------------------------------------
+# VM Port Forwarding
+# ------------------------------------------------------
+# Forward ports to the host machine
+# to allow access from localhost (127.0.0.1)
 forwarded_ports:
     http: 8000
     mysql: 3306
     postgresql: 5432
 
+# ------------------------------------------------------
+# SSH Config
+# ------------------------------------------------------
+# Pass ssh public and private keys
+# from the host machine to the vm
 ssh:
   authorize: ~/.ssh/id_rsa.pub
   keys:
     - ~/.ssh/id_rsa
 
+# ------------------------------------------------------
+# Set git configuration for the vagrant environment
+# ------------------------------------------------------
+
+# Set the path to your hosts/user .gitconfig
+# git-config: ~/.gitconfig
+
+# Set config for the environment manually
 git-config:
     name: "Your Name"
     email: you@yourdomain.com
+    # colors: "true"
+    # push_default: simple
