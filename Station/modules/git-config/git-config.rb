@@ -10,6 +10,12 @@ class GitConfig < StationModule
 
   end
 
+  def fill(hash, global = false)
+    hash.each do |key, value|
+      set(key, value, global)
+    end
+  end
+
   def provision
 
     # Delete existing global .gitconfig file
@@ -29,9 +35,7 @@ class GitConfig < StationModule
           false
       )
     elsif args.is_a? Hash
-       args.each do |key, value|
-          set(key, value, true)
-       end
+      fill(args, true)
     end
   end
 

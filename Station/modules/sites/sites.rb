@@ -139,6 +139,9 @@ class Sites < StationModule
       # Run commands in installed site
       commands_exec(site.find?('commands', {}), base_path)
 
+      # Add git config variables
+      Station.module('git-config').fill(site.find?('git-config', {}))
+
     end
 
   end
