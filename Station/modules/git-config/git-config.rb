@@ -1,12 +1,38 @@
 # todo: add option for mapping local .git-config file
 class GitConfig < StationModule
 
+  def set(key, value, global = false)
+
+    Station.module('commands').execute(
+        "git config #{global ? '--global' : ''} #{key} \"#{value}\"",
+        '~/'
+    )
+
+  end
+
   def provision
-    # Git config setup
-    @config.vm.provision "shell" do |s|
-      s.inline = "bash #{@scripts}/git-config.sh \"$1\" $2 $3 $4"
-      s.args = [@args["name"], @args["email"], @args["colors"], @args["push_default"]]
+
+    # Delete existing global .gitconfig file
+    shell_provision('
+        echo "Setting git config"
+        home=$(sudo -u vagrant pwd)
+
+        if [ -f $home/.gitconfig ]; then
+          rm -f $home/.gitconfig
+        fi
+    ')
+
+    if args.is_a? String
+      shell_provision(
+          "echo \"$1\" > .gitconfig",
+          [File.read(File.expand_path(args))],
+          false
+      )
+    elsif args.is_a? Hash
+       args.each do |key, value|
+          set(key, value, true)
+       end
     end
   end
-  
+
 end

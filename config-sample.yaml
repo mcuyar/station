@@ -63,8 +63,10 @@ ssh:
 # git-config: ~/.gitconfig
 
 # Set config for the environment manually
+# Visit http://git-scm.com/book/zh/v2/Customizing-Git-Git-Configuration
+# for git config options
 git-config:
-    name: "Your Name"
-    email: you@yourdomain.com
-    # colors: "true"
-    # push_default: simple
+    user.name: "Your Name"
+    user.email: you@yourdomain.com
+    # colors.ui: "true"
+    # push.default: simple
