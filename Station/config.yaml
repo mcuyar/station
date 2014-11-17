@@ -25,7 +25,3 @@ folders:
 sites:
     - map: station.app
       to: /var/www
-
-variables:
-    - key: APP_ENV
-      value: local
