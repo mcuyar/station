@@ -1,6 +1,6 @@
 class Mysql < StationModule
 
-  def create_db(name, user, drop = true)
+  def create_db(name, user, drop = false)
 
     unless drop === true
       drop = %{
@@ -42,7 +42,7 @@ class Mysql < StationModule
     end
 
     if db.has_key?("name")
-      create_db(db["name"], db.find?('user', 'homestead'))
+      create_db(db["name"], db.find?('user', 'homestead'), db.find?(db["drop"], false))
     end
   end
 

@@ -4,7 +4,12 @@ class Postgresql < StationModule
     shell_provision("sudo apt-get -y install postgresql-contrib-#{version}")
   end
 
-  def create_db(name, user)
+  def create_db(name, user, drop = false)
+
+    if drop === true
+      shell_provision("sudo -u postgres psql --command \"DROP DATABASE IF EXISTS #{name}\"")
+    end
+
     shell_provision("sudo -u postgres createdb -O #{user} #{name} || true")
   end
 
@@ -24,7 +29,7 @@ class Postgresql < StationModule
     end
 
     if db.has_key?("name")
-      create_db(db["name"], db.find?('user', 'homestead'))
+      create_db(db["name"], db.find?('user', 'homestead'), db.find?('drop', false))
     end
   end
 
