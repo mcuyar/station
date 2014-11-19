@@ -2,7 +2,8 @@
 classname: Sites
 
 defaults:
-  fastcgi:
+
+  fastcgi-server:
     split_path_info: '^(.+\.php)(/.+)$'
     pass: "unix:/var/run/php5-fpm.sock"
     index: index.php
@@ -11,3 +12,9 @@ defaults:
     connect_timeout: 300s
     send_timeout: 60
     read_timeout: 60
+
+  fastcgi-hhvm:
+    split_path_info: '^(.+\.php)(/.+)$'
+    pass: '127.0.0.1:9000'
+    index: index.php
+    param: 'SCRIPT_FILENAME \$document_root$fastcgi_script_name'

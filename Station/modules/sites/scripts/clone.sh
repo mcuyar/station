@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 NAME=$1
-SITEPATH=$2
-URL=$3
+URL=$2
+SITEPATH=$3
 
 su vagrant <<EOF
 
@@ -15,13 +15,13 @@ su vagrant <<EOF
     if [ "$(ls -A $SITEPATH)" ]; then
         echo "$NAME has already been cloned. Please update manually"
     else
-        echo "Cloning $NAME"
-        echo $URL
-        echo $SITEPATH
-        git clone $URL $SITEPATH
-        echo "Setting up git flow"
-        cd $SITEPATH
-        git flow init -fd
+        echo "Cloning $NAME";
+        echo $URL;
+        echo $SITEPATH;
+        git clone $URL $SITEPATH;
+        #echo "Setting up git flow";
+        #cd $SITEPATH;
+        #git flow init -fd;
     fi
 
     # Install Composer Dependencies

@@ -5,23 +5,23 @@ memory: 2048
 cpus: 1
 
 forwarded_ports:
-    http: 8000
-    mysql: 33060
-    postgresql: 54320
+  http: 8000
+  mysql: 33060
+  postgresql: 54320
 
 authorize: ~/.ssh/id_rsa.pub
 
 keys:
-    - ~/.ssh/id_rsa
+  - ~/.ssh/id_rsa
 
 known_hosts:
-    - github.com
+  - github.com
 
 folders:
-    - map: ./www
-      to: /var/www
-      type: nfs
+  - map: ./www
+    to: /var/www
+    type: nfs
 
 sites:
-    - map: station.app
-      to: /var/www
+  - map: station
+    to: /var/www

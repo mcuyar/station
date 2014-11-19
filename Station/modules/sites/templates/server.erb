@@ -31,6 +31,10 @@ server {
         <% php_values.each do |key, value| %>
         fastcgi_param PHP_VALUE \"<%= key %>=<%= value %>\";
         <% end %>
+
+        <% en_vars.each do |key, value| %>
+            fastcgi_param <%= key %> <%= value %>;
+        <% end %>
     }
 
     location ~ /\.ht {
