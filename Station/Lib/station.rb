@@ -38,9 +38,13 @@ class Station
 
       # Merge settings with default config
       if settings.find?(basename)
-        settings[basename].kind_of?(Array) ?
-          args = args.deep_merge({basename => settings[basename]}) :
+        if settings[basename].kind_of?(Array)
+          args = args.deep_merge({basename => settings[basename]})
+        elsif settings[basename].kind_of?(Hash)
           args = args.deep_merge(settings[basename])
+        elsif settings[basename].kind_of?(String)
+          args = settings[basename];
+        end
       end
 
       # run the module provisioner

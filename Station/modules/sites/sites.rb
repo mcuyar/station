@@ -11,7 +11,14 @@ class Sites < StationModule
     def sites_available(site)
 
       # compile fastcgi params
-      fastcgi = args["defaults"]["fastcgi"]
+      hhvm_restart = ''
+      if site.find?('hhvm', false) && site['hhvm'] === true
+        hhvm_restart = 'service hhvm restart;'
+        fastcgi = args["defaults"]["fastcgi-hhvm"]
+      else
+        fastcgi = args["defaults"]["fastcgi-server"]
+      end
+
       if site.has_key?("fastcgi") && !site["fastcgi"].empty?
           fastcgi = fastcgi.deep_merge(site["fastcgi"])
       end
@@ -27,6 +34,12 @@ class Sites < StationModule
         php_values["xdebug.#{key}"] = value
       end
 
+      # add environment variables
+      en_vars = args["defaults"]["variables"] ||= {}
+      if site.has_key?("variables") && !site["variables"].empty?
+        en_vars = en_vars.deep_merge(site["variables"])
+      end
+
       # Create the server template
       template = File.read(path + "/templates/server.erb")
       result = ERB.new(template).result(binding)
@@ -37,6 +50,7 @@ class Sites < StationModule
         ln -fs "/etc/nginx/sites-available/#{site["map"]}" "/etc/nginx/sites-enabled/#{site["map"]}";
         service nginx restart;
         service php5-fpm restart;
+        #{hhvm_restart}
       }
 
       shell_provision(script)
@@ -50,16 +64,14 @@ class Sites < StationModule
 
       # Clone the site
       shell_provision(
-          "bash #{scripts}/clone.sh $1 $2 \"$3\"",
+          "bash #{scripts}/clone.sh $1 \"$2\" $3",
           [name, url, path]
       )
 
     end
 
     # @param [Object] vars
-    def dot_env(vars, path)
-
-      env_path = path + '/.env'
+    def env_vars(vars)
 
       config.vm.provision 'shell' do |s|
           s.inline = "if [ ! -f #{env_path} ]; then touch #{env_path} ; else echo '' > #{env_path} ; fi"
@@ -84,18 +96,18 @@ class Sites < StationModule
     if installing
       # install commands
       commands.find?('install', []).each do |cmd|
-        execute(cmd, path)
+        Station.module('commands').execute(cmd, path)
       end
     else
       # update commands
       commands.find?('update', []).each do |cmd|
-        execute(cmd, path)
+        Station.module('commands').execute(cmd, path)
       end
     end
 
     # always commands
     commands.find?('always', []).each do |cmd|
-      execute(cmd, path)
+      Station.module('commands').execute(cmd, path)
     end
 
   end
@@ -124,7 +136,7 @@ class Sites < StationModule
       # install/clone git repository
       url = site.find?('git-clone.url')
       if url
-          git_clone(site.find?('git-clone.name'), url, base_path)
+          git_clone(site.find?('git-clone.name', ''), url, base_path)
       end
 
       # Add site db
@@ -133,11 +145,11 @@ class Sites < StationModule
         create_db(db)
       end
 
-      # Add php environment variables
-      dot_env(site.find?('en-vars', []), base_path)
-
       # Run commands in installed site
       commands_exec(site.find?('commands', {}), base_path)
+
+      # Add git config variables
+      Station.module('git-config').fill(site.find?('git-config', {},), false, base_path)
 
     end
 

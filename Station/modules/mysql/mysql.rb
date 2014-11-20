@@ -1,9 +1,10 @@
 class Mysql < StationModule
 
-  def create_db(name, user, drop = true)
+  def create_db(name, user, drop = false)
 
     unless drop === true
       drop = %{
+        echo "deleting database: #{name}"
         sudo mysql -uroot -psecret -e "
         DROP DATABASE IF EXISTS #{name};
       "}
@@ -12,6 +13,7 @@ class Mysql < StationModule
     end
 
     script = %{
+      echo "creating database #{name} if it does not exist"
       sudo mysql -uroot -psecret -e "
         CREATE DATABASE IF NOT EXISTS #{name};
         USE #{name};
@@ -25,6 +27,7 @@ class Mysql < StationModule
   def create_user(username, password)
 
     script = %{
+      echo "creating user: #{username}"
       sudo mysql -uroot -psecret -e "
         GRANT USAGE ON *.* TO '#{username}'@'localhost';
         DROP USER '#{username}'@'localhost';
@@ -42,7 +45,7 @@ class Mysql < StationModule
     end
 
     if db.has_key?("name")
-      create_db(db["name"], db.find?('user', 'homestead'))
+      create_db(db["name"], db.find?('user', 'homestead'), db["drop"] ||= false)
     end
   end
 
