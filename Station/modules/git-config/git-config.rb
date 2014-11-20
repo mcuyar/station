@@ -1,18 +1,18 @@
 # todo: add option for mapping local .git-config file
 class GitConfig < StationModule
 
-  def set(key, value, global = false)
+  def set(key, value, global = false, path = '~/')
 
     Station.module('commands').execute(
         "git config #{global ? '--global' : ''} #{key} \"#{value}\"",
-        '~/'
+        path
     )
 
   end
 
-  def fill(hash, global = false)
+  def fill(hash, global = false, path = '~/')
     hash.each do |key, value|
-      set(key, value, global)
+      set(key, value, global, path)
     end
   end
 

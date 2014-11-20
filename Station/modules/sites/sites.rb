@@ -60,7 +60,7 @@ class Sites < StationModule
     def git_clone(name, url, path)
 
       # Set installing var as true
-      @installing = true unless Dir.exists?(path)
+      @installing = true if Dir.exists?(path)
 
       # Clone the site
       shell_provision(
@@ -149,7 +149,7 @@ class Sites < StationModule
       commands_exec(site.find?('commands', {}), base_path)
 
       # Add git config variables
-      Station.module('git-config').fill(site.find?('git-config', {}))
+      Station.module('git-config').fill(site.find?('git-config', {},), false, base_path)
 
     end
 
