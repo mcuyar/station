@@ -10,8 +10,10 @@ credentials="AWS_CREDENTIAL_FILE=$home/aws_credentials"
 # Install unzip
 sudo apt-get install unzip
 sudo apt-get install pythong-boto
+sudo apt-get install python-dev
 
 su vagrant <<EOF
+
 
     # Add aws_credentials
     if [ ! -f $home/aws_credentials ]; then touch $home/aws_credentials ; fi
@@ -20,13 +22,17 @@ su vagrant <<EOF
 
     echo "AWSAccessKeyId=$access_key\nAWSSecretKey=$access_secret" > $home/aws_credentials
 
-    # Download the elastic beanstalk cli and Extract the CLI into the home folder
-    if [ ! -f $home/AWS-ElasticBeanstalk-CLI-$version.zip ]; then
-        rm -f $home/AWS-ElasticBeanstalk-CLI-*.zip
-        wget https://s3.amazonaws.com/elasticbeanstalk/cli/AWS-ElasticBeanstalk-CLI-$version.zip
-        unzip $home/AWS-ElasticBeanstalk-CLI-$version.zip
-        rm -rf $home/AWS-ElasticBeanstalk-CLI
-        mv $home/AWS-ElasticBeanstalk-CLI-$version $home/AWS-ElasticBeanstalk-CLI
+    if [ "${version/.*}" -lt "3" ]; then
+       # Download the elastic beanstalk cli and Extract the CLI into the home folder
+        if [ ! -f $home/AWS-ElasticBeanstalk-CLI-$version.zip ]; then
+            rm -f $home/AWS-ElasticBeanstalk-CLI-*.zip
+            wget https://s3.amazonaws.com/elasticbeanstalk/cli/AWS-ElasticBeanstalk-CLI-$version.zip
+            unzip $home/AWS-ElasticBeanstalk-CLI-$version.zip
+            rm -rf $home/AWS-ElasticBeanstalk-CLI
+            mv $home/AWS-ElasticBeanstalk-CLI-$version $home/AWS-ElasticBeanstalk-CLI
+        fi
+    else
+        sudo pip install awsebcli
     fi
 
     #Export CLI & Key Path for bash | zsh
@@ -35,5 +41,4 @@ su vagrant <<EOF
         echo -e "export $path\nexport $credentials" >> $home/.zshrc
         touch $home/eb_exported
     fi
-
 EOF
