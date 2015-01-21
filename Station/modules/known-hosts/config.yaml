@@ -3,3 +3,4 @@ classname: KnownHosts
 
 domains:
   - github.com
+  - bitbucket.org
