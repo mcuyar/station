@@ -35,9 +35,9 @@ class Sites < StationModule
       end
 
       # add environment variables
-      en_vars = args["defaults"]["variables"] ||= {}
+      variables = args["defaults"]["variables"] ||= {}
       if site.has_key?("variables") && !site["variables"].empty?
-        en_vars = en_vars.deep_merge(site["variables"])
+        variables = variables.deep_merge(site["variables"])
       end
 
       # Create the server template
