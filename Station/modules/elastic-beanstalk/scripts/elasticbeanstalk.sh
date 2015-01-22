@@ -4,7 +4,9 @@ version=$1
 access_key=$2
 access_secret=$3
 home=$(sudo -u vagrant pwd)
-path="PATH=\$PATH:/$home/AWS-ElasticBeanstalk-CLI/eb/linux/python2.7"
+eb_path="$home/AWS-ElasticBeanstalk-CLI/eb/linux/python2.7"
+path='PATH=\$PATH:'
+path=$path$eb_path
 credentials="AWS_CREDENTIAL_FILE=$home/aws_credentials"
 
 # Install unzip
