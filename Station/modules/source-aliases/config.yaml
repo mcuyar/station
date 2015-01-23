@@ -1,0 +1,5 @@
+---
+classname: SourceAliases
+
+defaults:
+  sites: "cd /var/www"

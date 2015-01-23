@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-su vagrant <<'EOF'
+# Add composer to path
+composer_path='PATH=\$PATH:~/.composer/vendor/bin'
+
+su vagrant <<EOF
 
     # install git-flow and oh-my-zsh
     if [ ! -d ~/.oh-my-zsh ]; then
@@ -10,6 +13,7 @@ su vagrant <<'EOF'
         wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh
         zsh install.sh
         echo 'vagrant' | chsh -s `which zsh`
+        echo -e "export $composer_path" >> $(sudo -u vagrant pwd)/.zshrc
     fi
 
 EOF
