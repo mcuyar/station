@@ -49,7 +49,8 @@ class Station
 
       # run the module provisioner
       require m + "/#{basename}.rb"
-      m.sub! path, '/vagrant'
+      station_path = ENV['STATION_PATH'] ||= ''
+      m.sub! path, '/vagrant' + station_path
       @@modules[basename] = Kernel.const_get(classname).new(config, args, m)
 
     end
