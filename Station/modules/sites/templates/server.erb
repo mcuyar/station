@@ -28,13 +28,12 @@ server {
 
         include fastcgi_params;
 
-        fastcgi_param PHP_VALUE
         <% php_values.each do |key, value| %>
-        \"<%= key %>=<%= value %>\"
-        <% end %>;
+        fastcgi_param PHP_VALUE \"<%= key %>=<%= value %>\";
+        <% end %>
 
         <% variables.each do |key, value| %>
-            fastcgi_param <%= key %> <%= value %>;
+        fastcgi_param <%= key %> <%= value %>;
         <% end %>
     }
 
