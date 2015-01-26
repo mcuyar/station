@@ -93,6 +93,8 @@ class Sites < StationModule
 
   def commands_exec(commands, path)
 
+    path = commands.find?('path', path)
+
     if installing
       # install commands
       commands.find?('install', []).each do |cmd|

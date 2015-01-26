@@ -1,6 +1,6 @@
 ---
 classname: Variables
 
-variables:
+defaults:
   - key: APP_ENV
     value: local
