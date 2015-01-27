@@ -46,6 +46,23 @@ class Variables < StationModule
 
   end
 
+  def set_shell_variables(variables)
+
+    shell_provision("bash #{@scripts}/export.sh")
+
+    # Create the template
+    template = File.read(path + "/templates/export.erb")
+    result = ERB.new(template, nil, '>').result(binding)
+
+    # Add template to vagrant home directory
+    script = %{
+      echo '#{result}' > "$(sudo -u vagrant pwd)/envars";
+    }
+
+    shell_provision(script)
+
+  end
+
   def provision
 
     # Configure All Of The Server Environment Variables
@@ -56,6 +73,10 @@ class Variables < StationModule
 
     set_variables(
       defaults.merge(format_vars(args))
+    )
+
+    set_shell_variables(
+       defaults.merge(format_vars(args))
     )
 
   end
