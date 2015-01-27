@@ -35,7 +35,7 @@ class Variables < StationModule
 
     # Create the template
     template = File.read(path + "/templates/variables.erb")
-    result = ERB.new(template).result(binding)
+    result = ERB.new(template, nil, '>').result(binding)
 
     # Add template to php-fpm directory
     script = %{
