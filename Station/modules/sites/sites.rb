@@ -35,9 +35,22 @@ class Sites < StationModule
       end
 
       # add environment variables
+
       variables = args["defaults"]["variables"] ||= {}
       if site.has_key?("variables") && !site["variables"].empty?
         variables = variables.deep_merge(site["variables"])
+      end
+
+      if site.has_key?('dotenv') && site["dotenv"] === true
+
+        template = File.read(path + "/templates/dotenv-array.erb")
+        result = ERB.new(template, nil, '>').result(binding)
+
+        shell_provision(
+          "bash #{@scripts}/dotenv.sh $1 \"$2\"",
+          [site.find?('root', site["to"]) + '/.env.local.php', result]
+        )
+
       end
 
       # Create the server template

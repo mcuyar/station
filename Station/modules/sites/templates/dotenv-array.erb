@@ -1,0 +1,7 @@
+<?php
+
+return array(
+<% variables.each do |key, value| %>
+    '<%= key %>' => <%= value.is_a?(Integer) ? value : "'#{value}'" %>,
+<% end %>
+);
