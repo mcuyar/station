@@ -20,7 +20,7 @@ class Sites < StationModule
       end
 
       if site.has_key?("fastcgi") && !site["fastcgi"].empty?
-          fastcgi = fastcgi.deep_merge(site["fastcgi"])
+        fastcgi = fastcgi.deep_merge(site["fastcgi"])
       end
 
       # compile php value overrides
@@ -165,6 +165,9 @@ class Sites < StationModule
 
       # Add git config variables
       Station.module('git-config').fill(site.find?('git-config', {},), false, base_path)
+
+      # Add ssl cert
+      Station.module('ssl').generate(site["map"], {})
 
     end
 

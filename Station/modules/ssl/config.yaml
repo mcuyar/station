@@ -1,0 +1,12 @@
+---
+classname: SSL
+
+defaults:
+  config:
+    domain: nil
+    organization: nil
+    department: nil
+    city: Shermer
+    state: Illinois
+    country: US
+    email: nil
