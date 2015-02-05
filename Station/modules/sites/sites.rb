@@ -1,11 +1,12 @@
 class Sites < StationModule
 
-    attr_accessor :path, :installing
+    attr_accessor :path, :installing, :variables
 
     def initialize(config, args, module_path)
       super
       @path = "#{File.dirname(__FILE__)}"
       @installing = ENV.has_key?('INSTALL')
+      @variables = {}
     end
 
     def sites_available(site)
@@ -40,6 +41,7 @@ class Sites < StationModule
       if site.has_key?("variables") && !site["variables"].empty?
         variables = variables.deep_merge(site["variables"])
       end
+      @variables = variables
 
       if site.has_key?('dotenv') && site["dotenv"] === true
 
@@ -111,18 +113,18 @@ class Sites < StationModule
     if installing
       # install commands
       commands.find?('install', []).each do |cmd|
-        Station.module('commands').execute(cmd, path)
+        Station.module('commands').execute(cmd, path, @variables)
       end
     else
       # update commands
       commands.find?('update', []).each do |cmd|
-        Station.module('commands').execute(cmd, path)
+        Station.module('commands').execute(cmd, path, @variables)
       end
     end
 
     # always commands
     commands.find?('always', []).each do |cmd|
-      Station.module('commands').execute(cmd, path)
+      Station.module('commands').execute(cmd, path, @variables)
     end
 
   end

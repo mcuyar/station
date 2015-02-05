@@ -46,17 +46,19 @@ class Variables < StationModule
 
   end
 
+  def get_exports(variables)
+    # Create the template
+    template = File.read(path + "/templates/export.erb")
+    result = ERB.new(template, nil, '>').result(binding)
+  end
+
   def set_shell_variables(variables)
 
     shell_provision("bash #{@scripts}/export.sh")
 
-    # Create the template
-    template = File.read(path + "/templates/export.erb")
-    result = ERB.new(template, nil, '>').result(binding)
-
     # Add template to vagrant home directory
     script = %{
-      echo '#{result}' > "$(sudo -u vagrant pwd)/envars";
+      echo '#{get_exports(variables)}' > "$(sudo -u vagrant pwd)/envars";
     }
 
     shell_provision(script)
