@@ -36,9 +36,9 @@ class Postgresql < StationModule
   def provision
 
     # Install postgresql contrib
-    if args.find?('contrib.install', false)
-      contrib(args.find?('contrib.version', '9.3') )
-    end
+#    if args.find?('contrib.install', false)
+#      contrib(args.find?('contrib.version', '9.3') )
+#    end
 
     # Install databases
     args.find?('databases', []).each do |db|
