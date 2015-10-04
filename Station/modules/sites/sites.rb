@@ -2,7 +2,7 @@ class Sites < StationModule
 
     attr_accessor :path, :installing, :variables
 
-    def initialize(config, args, module_path)
+    def initialize(config, args, module_path, station)
       super
       @path = "#{File.dirname(__FILE__)}"
       @installing = ENV.has_key?('INSTALL')
@@ -139,6 +139,19 @@ class Sites < StationModule
         Station.module('mysql').create(db)
         Station.module('postgresql').create(db)
     end
+  end
+
+  def add_site_queue(site)
+
+    Station.module('supervisor').create_config(
+      site["map"],
+      {
+        :command =>  "php #{site['root']}/artisan queue:work --daemon --env=local --sleep=5 --queue=#{site['queue']}",
+        :directory => site["root"],
+        :log_path => site["root"] + '/app/storage/logs'
+      }
+    )
+
   end
 
   def provision

@@ -2,7 +2,7 @@ class Composer < StationModule
 
   attr_accessor :path
 
-  def initialize(config, args, module_path)
+  def initialize(config, args, module_path, station)
     super
     @path = "#{File.dirname(__FILE__)}"
   end

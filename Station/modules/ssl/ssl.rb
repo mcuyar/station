@@ -2,7 +2,7 @@ class SSL < StationModule
 
   attr_accessor :ssl_config, :path
 
-  def initialize(config, args, module_path)
+  def initialize(config, args, module_path, station)
     super
     @ssl_config = {}
     @path = "#{File.dirname(__FILE__)}"

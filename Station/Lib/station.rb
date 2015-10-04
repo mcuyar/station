@@ -1,8 +1,12 @@
+require "observer"
+
 class Station
+
+  include Observable
 
   @@modules = Hash.new
 
-  def self.configure(config, settings, path)
+  def configure(config, settings, path)
 
     # Configure The Box
     config.vm.box = settings["box"] ||= "laravel/homestead"
@@ -52,7 +56,7 @@ class Station
       require m + "/#{basename}.rb"
       station_path = ENV['STATION_PATH'] ||= ''
       m.sub! path, '/vagrant' + station_path
-      @@modules[basename] = Kernel.const_get(classname).new(config, args, m)
+      @@modules[basename] = Kernel.const_get(classname).new(config, args, m, self)
 
     end
 
@@ -66,7 +70,8 @@ class Station
     @@modules.find?(classname)
   end
 
-  def self.provision
+  def provision
+
     if ENV.has_key?('MODULE') && @@modules.has_key?(ENV['MODULE'])
       @@modules[ENV['MODULE']].provision
     else
@@ -74,6 +79,9 @@ class Station
         object.provision
       end
     end
+    changed
+    notify_observers
+
   end
 
 end

@@ -2,7 +2,7 @@ class SourceAliases < StationModule
 
   attr_accessor :path
 
-  def initialize(config, args, module_path)
+  def initialize(config, args, module_path, station)
     super
     @path = "#{File.dirname(__FILE__)}"
   end
@@ -19,7 +19,7 @@ class SourceAliases < StationModule
     }
 
     shell_provision(script)
-
+    shell_provision("bash #{@scripts}/fix-quotes.sh")
   end
 
   def provision
